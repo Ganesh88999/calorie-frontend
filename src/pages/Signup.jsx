@@ -1,14 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Mail, Phone, Lock } from 'lucide-react'
+import { Mail, Lock } from 'lucide-react'
 
 const Signup = () => {
   const [email, setEmail] = useState('')
-  const [mobile, setMobile] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [useEmail, setUseEmail] = useState(true)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const { signup } = useAuth()
@@ -31,14 +29,14 @@ const Signup = () => {
       return
     }
 
-    const result = await signup(useEmail ? email : null, useEmail ? null : mobile, password)
-    
+    const result = await signup(email, password)
+
     setLoading(false)
-    
+
     if (result.success) {
       navigate('/onboarding')
     } else {
-      setError(result.message)
+      setError(result.message || 'Signup failed. Please try again.')
     }
   }
 
@@ -53,75 +51,40 @@ const Signup = () => {
         </div>
 
         <div className="card">
-          <div className="flex gap-2 mb-6">
-            <button
-              onClick={() => setUseEmail(true)}
-              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-                useEmail
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-              }`}
-            >
-              <Mail className="w-4 h-4 inline mr-2" />
-              Email
-            </button>
-            <button
-              onClick={() => setUseEmail(false)}
-              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-                !useEmail
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-              }`}
-            >
-              <Phone className="w-4 h-4 inline mr-2" />
-              Mobile
-            </button>
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
-            {useEmail ? (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Email
-                </label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Email
+              </label>
+              <div className="flex items-center border rounded-lg px-3 py-2 bg-white dark:bg-gray-800">
+                <Mail className="w-5 h-5 text-gray-400 mr-2" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="input-field"
+                  className="flex-1 bg-transparent outline-none text-gray-900 dark:text-white"
                   placeholder="your@email.com"
                   required
                 />
               </div>
-            ) : (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Mobile Number
-                </label>
-                <input
-                  type="tel"
-                  value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
-                  className="input-field"
-                  placeholder="+1234567890"
-                  required
-                />
-              </div>
-            )}
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Password
               </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input-field"
-                placeholder="••••••••"
-                required
-                minLength={6}
-              />
+              <div className="flex items-center border rounded-lg px-3 py-2 bg-white dark:bg-gray-800">
+                <Lock className="w-5 h-5 text-gray-400 mr-2" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="flex-1 bg-transparent outline-none text-gray-900 dark:text-white"
+                  placeholder="••••••••"
+                  required
+                  minLength={6}
+                />
+              </div>
             </div>
 
             <div>
@@ -132,7 +95,7 @@ const Signup = () => {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="input-field"
+                className="w-full border rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 placeholder="••••••••"
                 required
                 minLength={6}
@@ -148,7 +111,7 @@ const Signup = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full btn-primary py-3 disabled:opacity-50"
+              className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition disabled:opacity-50"
             >
               {loading ? 'Creating account...' : 'Sign Up'}
             </button>
@@ -156,7 +119,7 @@ const Signup = () => {
 
           <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
             Already have an account?{' '}
-            <Link to="/login" className="text-primary-600 dark:text-primary-400 font-medium hover:underline">
+            <Link to="/login" className="text-green-600 dark:text-green-400 font-medium hover:underline">
               Login
             </Link>
           </p>
@@ -167,4 +130,3 @@ const Signup = () => {
 }
 
 export default Signup
-

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useAuth } from '../context/AuthContext'
 import { Award } from 'lucide-react'
 
 const MonthlyBadge = ({ userId }) => {
   const [hasBadge, setHasBadge] = useState(false)
   const [loading, setLoading] = useState(true)
+  const { profile } = useAuth()
 
   useEffect(() => {
     checkMonthlyAchievement()
@@ -40,9 +42,8 @@ const MonthlyBadge = ({ userId }) => {
         dailyTotals[dateKey] += entry.calories
       })
 
-      // Get user's goal (we'll need to fetch it)
-      const userResponse = await axios.get('/api/user/profile')
-      const goal = userResponse.data?.profile?.dailyCalorieGoal || 2000
+      // Get user's goal from Supabase-backed profile via context
+      const goal = profile?.dailyCalorieGoal || 2000
 
       // Check if user stayed within limits (within 20% of goal) for at least 70% of days
       const daysWithEntries = Object.keys(dailyTotals).length

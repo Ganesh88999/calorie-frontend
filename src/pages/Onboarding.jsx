@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import axios from 'axios'
 import { User, Target, Calculator } from 'lucide-react'
 
 const Onboarding = () => {
-  const { user, fetchUserProfile } = useAuth()
+  const { user, fetchUserProfile, updateUserProfile } = useAuth()
   const navigate = useNavigate()
   
   const [step, setStep] = useState(1)
@@ -81,12 +80,13 @@ const Onboarding = () => {
     try {
       const goal = formData.dailyCalorieGoal || calculateCalorieGoal() || 2000
       
-      await axios.put('/api/user/profile', {
-        ...formData,
+      await updateUserProfile({
         age: parseInt(formData.age),
         weight: parseFloat(formData.weight),
         height: parseFloat(formData.height),
-        dailyCalorieGoal: parseInt(goal)
+        gender: formData.gender,
+        dailyCalorieGoal: parseInt(goal),
+        doctorDeficitPlan: formData.doctorDeficitPlan || ''
       })
 
       await fetchUserProfile()
